@@ -1,0 +1,143 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:dna="http://www.generali.dna.it/custom">
+
+	<p:outputLabel styleClass="inline" value="#{questBBean.domandaData8.testoDomanda}" />
+	<p:commandButton id="editMalattieInfoDomanda8"
+		styleClass="ui-icon icon-gear-info info-tooltip-icon"
+		rendered="#{questBBean.domandaData8 != null and not empty questBBean.domandaData8.infoDomanda}"
+		process="@none" style="float: right; color: #333" title=""/>
+	<p:tooltip
+		id="tooltipEditInfoDomanda8"
+		rendered="#{questBBean.domandaData8 != null and not empty questBBean.domandaData8.infoDomanda}"
+		position="left"
+		hideDelay="3000"
+		for="editMalattieInfoDomanda8">
+		<div onclick="cleanupTooltips();">
+			<h:outputText escape="false" value="#{questBBean.domandaData8.infoDomanda}" />
+		</div>
+	</p:tooltip>
+	
+	<p:outputPanel id="domanda8-main-panel">
+		<div class="row margin-top-20">
+			<div class="col-xs-12">
+				<p:selectOneRadio
+					value="#{questBBean.domandaData8.risposta.rispostaPrincipale}">
+					<p:ajax event="change"
+						process="@this"
+						update="formQuestionarioMedico:domanda8-main-panel"
+						listener="#{questCBean.showDettaglioDomanda8}"
+						onstart="PF('dlgBlock').show();"
+						oncomplete="PF('dlgBlock').hide();" />
+					<f:selectItem itemValue="true" itemLabel="#{questionarioMedPPBundle.rispostaSi}" />
+					<f:selectItem itemValue="false" itemLabel="#{questionarioMedPPBundle.rispostaNo}" />
+				</p:selectOneRadio>
+			</div>
+		</div>	
+	
+		<div class="row">
+			<p:outputPanel id="domanda8_out_panel"
+				rendered="#{questBBean.domandaData8.risposta.rispostaPrincipale}">
+				
+				<div class="row-xs-12 margin-top-30">
+					<div class="col-xs-12">
+		
+						<h:dataTable id="domanda8PanelTable"
+							style="width: 70%;" value="#{questBBean.domandaData8.dettaglioModel}"
+							var="dettagliD8">
+							<h:column>
+								<div class="margin-bottom-30">
+									<dna:fieldpanel
+										rendered="#{questBBean.domandaData8.risposta.rispostaPrincipale}"
+										wVar="domanda8-fieldpanel-#{questBBean.domandaData8.dettaglioModel.rowIndex}"
+										header="#{questCBean.formatFielPanelHeader(questionarioMedPPBundle.domanda8box)} #{questBBean.domandaData8.dettaglioModel.rowIndex + 1}"
+										closable="#{questBBean.domandaData8.dettagliQuestionario.size() > 1}">
+		
+										<ui:define name="actions">
+											<p:commandLink styleClass="icona-cestino icon-gear-trash"
+												action="#{questBBean.domandaData8.cleanFields(questBBean.domandaData8.dettaglioModel.rowIndex)}"
+												process="@this"
+												update="formQuestionarioMedico:domanda8-main-panel"
+												onstart="PF('dlgBlock').show();"
+												oncomplete="PF('dlgBlock').hide();">
+											</p:commandLink>
+		
+										</ui:define>
+										<ui:define name="body">
+											<p:ajax event="close"
+												listener="#{questBBean.domandaData8.removeDettaglio(questBBean.domandaData8.dettaglioModel.rowIndex)}"
+												onstart="PF('dlgBlock').show();"
+												oncomplete="PF('dlgBlock').hide();"
+												process="@this"
+												update="formQuestionarioMedico:domanda8-main-panel" />
+		
+											<div class="row riga-domanda">
+												<div class="col-xs-6">
+													<p:outputLabel value="#{questionarioMedPPBundle.domanda8malattiaDifettoFisico} *" />
+													<p:inputText
+														id="domanda8MalattiaDifettoFisico"
+														value="#{dettagliD8.malattiaDifettoFisico}"
+														styleClass="#{questBBean.domandaData8.isValid(questBBean.domandaData8.dettaglioModel.rowIndex, ':domanda8MalattiaDifettoFisico') ? '' : 'ui-state-error'} domanda8MalattiaDifettoFisico disable-other-input" >
+														<f:ajax event="change" />
+													</p:inputText>
+													<p:outputPanel styleClass="pnl-message-preventivatore pnl-message-small">
+														<p:messages id="msgTextDomanda8MalattiaDifettoFisico" for="domanda8MalattiaDifettoFisico" />
+													</p:outputPanel>
+												</div>
+												<div class="col-xs-6">
+													<p:outputLabel value="#{questionarioMedPPBundle.domanda8terapiaInAtto}" />
+													<p:inputText value="#{dettagliD8.terapiaInAttoOEseguita}">
+														<f:ajax event="change" />
+													</p:inputText>
+												</div>
+											</div>
+											<div class="row riga-domanda">
+												<div class="col-xs-6">
+													<p:outputLabel value="#{questionarioMedPPBundle.domanda8anno}" />
+													<p:inputMask value="#{dettagliD8.anno}" mask="9999">
+														<f:ajax event="change" />
+													</p:inputMask>
+												</div>
+												<div class="col-xs-6">
+													<p:outputLabel value="#{questionarioMedPPBundle.domanda8motivo}" />
+													<p:inputText value="#{dettagliD8.motivo}">
+														<f:ajax event="change" />
+													</p:inputText>
+												</div>
+											</div>
+											<div class="row riga-domanda">
+												<div class="col-xs-12">
+													<p:outputLabel value="#{questionarioMedPPBundle.domanda8note}" />
+													<p:inputText value="#{dettagliD8.note}">
+														<f:ajax event="change" />
+													</p:inputText>
+												</div>
+											</div>
+										</ui:define>
+									</dna:fieldpanel>
+								</div>
+							</h:column>
+						</h:dataTable>
+						
+					</div>
+				</div>
+				<div class="row-xs-12">
+					<div class="col-xs-6 text-left">
+						<dna:addLink
+							id="domanda8_addDettaglio"
+							beanRef="#{questCBean}"
+							method="addDettaglioMalattia"
+							title="#{questionarioMedPPBundle.domanda8addButton}"
+							rendered="#{questBBean.domandaData8.dettagliQuestionario.size() lt questBBean.domandaData8.getMaxElementPermitted()}"
+							process="@this"
+							update="formQuestionarioMedico:domanda8-main-panel" />
+					</div>
+				</div>
+			</p:outputPanel>
+		</div>
+	</p:outputPanel>
+</ui:composition>
